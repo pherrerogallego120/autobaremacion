@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autobaremación — Programa de Doctorado en Ciencias de la Salud y del Deporte</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f0; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
+
+  .header { background: #1a3a5c; color: white; padding: 2rem; text-align: center; }
+  .header h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .header p { font-size: 0.9rem; opacity: 0.85; }
+
+  .container { max-width: 860px; margin: 2rem auto; padding: 0 1rem 4rem; }
+
+  .instrucciones-box { background: #e8f4fd; border: 1px solid #b3d7f0; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+  .instrucciones-box h2 { font-size: 1rem; color: #1a3a5c; margin-bottom: 0.75rem; font-weight: 600; }
+  .instrucciones-box ul { padding-left: 1.25rem; font-size: 0.88rem; color: #2c4a6e; }
+  .instrucciones-box ul li { margin-bottom: 0.4rem; }
+  .instrucciones-box .doc-nota { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 0.75rem; font-size: 0.88rem; color: #664d03; }
+
+  .section { background: white; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden; }
+  .section-header { background: #1a3a5c; color: white; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+  .section-header h2 { font-size: 1rem; font-weight: 600; }
+  .section-header .max-pts { font-size: 0.85rem; opacity: 0.85; background: rgba(255,255,255,0.15); padding: 2px 10px; border-radius: 20px; }
+  .section-body { padding: 1.25rem; }
+
+  .merito-bloque { border: 1px solid #e0e0e0; border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 1rem; background: #fafafa; }
+  .merito-bloque:last-child { margin-bottom: 0; }
+
+  .merito-title { font-weight: 600; font-size: 0.93rem; color: #1a3a5c; margin-bottom: 0.4rem; }
+  .criterios-texto { font-size: 0.82rem; color: #555; background: #f0f4f8; border-left: 3px solid #4a90c4; padding: 0.5rem 0.75rem; border-radius: 0 4px 4px 0; margin-bottom: 0.75rem; line-height: 1.5; }
+  .criterios-texto strong { color: #1a3a5c; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem; }
+  .field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  .field-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 500; }
+  .field-group input, .field-group select, .field-group textarea {
+    width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 5px;
+    font-size: 0.88rem; font-family: Arial, sans-serif; background: white;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+    outline: none; border-color: #4a90c4; box-shadow: 0 0 0 2px rgba(74,144,196,0.15);
+  }
+  .field-group textarea { resize: vertical; min-height: 60px; }
+  .field-group .pts-display { font-size: 1.1rem; font-weight: 700; color: #1a7a40; text-align: center; padding: 6px; background: #eafaf1; border: 1px solid #b7e4c7; border-radius: 5px; }
+
+  .doc-ref-box { background: #fff8e1; border: 1px solid #ffe082; border-radius: 5px; padding: 0.6rem 0.9rem; margin-top: 0.5rem; font-size: 0.82rem; color: #5d4037; }
+  .doc-ref-box strong { color: #4a3000; }
+
+  .subtotal-row { display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #ccc; }
+  .subtotal-row .label { font-size: 0.85rem; color: #555; }
+  .subtotal-row .valor { font-size: 1.1rem; font-weight: 700; color: #1a3a5c; min-width: 70px; text-align: right; }
+
+  .resumen-box { background: #1a3a5c; color: white; border-radius: 8px; padding: 1.5rem 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .resumen-box .res-item { text-align: center; }
+  .resumen-box .res-label { font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px; }
+  .resumen-box .res-valor { font-size: 1.8rem; font-weight: 700; }
+  .resumen-box .res-total { font-size: 2.5rem; }
+  .resumen-box .res-item.total { background: rgba(255,255,255,0.12); padding: 0.75rem 1.5rem; border-radius: 8px; }
+
+  .datos-candidato { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .datos-candidato h2 { font-size: 1rem; color: #1a3a5c; font-weight: 600; margin-bottom: 1rem; }
+  .datos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .btn-enviar { width: 100%; padding: 1rem; background: #1a7a40; color: white; border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .btn-enviar:hover { background: #145e30; }
+  .btn-enviar:disabled { background: #aaa; cursor: not-allowed; }
+
+  .msg-exito { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1rem 1.25rem; border-radius: 8px; text-align: center; margin-top: 1rem; display: none; font-weight: 500; }
+  .btn-pdf { width: 100%; padding: 0.85rem; background: white; color: #1a3a5c; border: 2px solid #1a3a5c; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 0.75rem; transition: all 0.2s; }
+  .btn-pdf:hover { background: #f0f4f8; }
+  @media print {
+    .btn-pdf, .btn-enviar, .msg-exito, .msg-error { display: none !important; }
+    body { background: white; font-size: 13px; }
+    .header { background: #1a3a5c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-header { background: #1a3a5c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .resumen-box { background: #1a3a5c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .container { max-width: 100%; padding: 0 0.5rem; }
+    .section { break-inside: avoid; }
+    .merito-bloque { break-inside: avoid; }
+  }
+  .msg-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem 1.25rem; border-radius: 8px; text-align: center; margin-top: 1rem; display: none; }
+
+  .area-radio { display: flex; gap: 1.5rem; align-items: center; padding: 6px 0; }
+  .area-radio label { display: flex; align-items: center; gap: 5px; font-size: 0.88rem; cursor: pointer; color: #333; font-weight: 400; }
+  .area-radio input[type=radio] { width: auto; }
+
+  .nota-limite { font-size: 0.78rem; color: #888; font-style: italic; margin-top: 3px; }
+
+  @media (max-width: 600px) {
+    .field-row, .field-row.triple, .datos-grid { grid-template-columns: 1fr; }
+    .resumen-box { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Programa de Doctorado en Ciencias de la Salud y del Deporte</h1>
+  <p>Universidad de Zaragoza — Autobaremación de méritos para admisión 2025/26</p>
+</div>
+
+<div class="container">
+
+  <!-- INSTRUCCIONES -->
+  <div class="instrucciones-box">
+    <h2>Instrucciones importantes antes de comenzar</h2>
+    <ul>
+      <li>Rellena este formulario con los méritos que hayas incluido en tu documentación enviada a la secretaría.</li>
+      <li><strong>Numeración de documentos:</strong> Cada mérito debe 
+indicar el número de documento correspondiente. Este número debe 
+coincidir exactamente con el nombre del archivo que enviaste (p.ej. si 
+enviaste "Doc_3_Publicacion_JCR.pdf", indica el número 3).</li>
+      <li>Para cada mérito, debes explicar brevemente <strong>por qué</strong> asignas esa puntuación (p.ej. "Artículo en revista JCR Q1, primer autor").</li>
+      <li>El sistema calculará tu puntuación total automáticamente 
+aplicando los factores de corrección y los límites máximos de cada 
+apartado.</li>
+    </ul>
+
+    <div style="background:#1a3a5c;color:white;border-radius:7px;padding:1.1rem 1.4rem;margin-top:1rem;">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:0.6rem;">⚠ Pasos obligatorios al finalizar</div>
+      <ol style="padding-left:1.3rem;font-size:0.9rem;line-height:1.9;">
+        <li>Rellena todos tus méritos y comprueba que la puntuación calculada es correcta.</li>
+        <li>Pulsa <strong>"Enviar autobaremación a la comisión"</strong> y espera el mensaje de confirmación verde.</li>
+        <li>Pulsa <strong>"Descargar informe PDF"</strong> para generar tu informe de autobaremación.</li>
+        <li><strong>Envía ese PDF por correo electrónico a la secretaría del programa de doctorado</strong> junto con el resto de tu documentación, solicitando acuse de recibo.</li>
+        <li>Guarda el acuse de recibo de secretaría como justificante de que tu solicitud ha sido recibida correctamente.</li>
+      </ol>
+      <div style="margin-top:0.75rem;font-size:0.85rem;background:rgba(255,255,255,0.12);padding:0.6rem 0.9rem;border-radius:5px;">
+        <strong>Importante:</strong> El envío del formulario y el envío 
+del PDF por email son dos pasos independientes y ambos son obligatorios.
+ El PDF es tu justificante oficial de autobaremación.
+      </div>
+    </div>
+
+    <div class="doc-nota" style="margin-top:0.75rem;">
+      <strong>Sobre las áreas afines:</strong> Se consideran áreas 
+afines: Ciencias de la Actividad Física y del Deporte, Fisioterapia, 
+Enfermería, Terapia Ocupacional, Nutrición y Dietética. Las demás 
+titulaciones aplican un factor de corrección de 0,8.
+    </div>
+  </div>
+
+  <!-- DATOS DEL CANDIDATO -->
+  <div class="datos-candidato">
+    <h2>Datos del candidato</h2>
+    <div class="datos-grid">
+      <div class="field-group">
+        <label for="nombre">Nombre completo *</label>
+        <input type="text" id="nombre" placeholder="Ej: Ana García López" required="">
+      </div>
+      <div class="field-group">
+        <label for="email">Correo electrónico *</label>
+        <input type="email" id="email" placeholder="candidato@correo.com" required="">
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN EN TIEMPO REAL -->
+  <div class="resumen-box">
+    <div class="res-item">
+      <div class="res-label">Méritos académicos</div>
+      <div class="res-valor" id="res-academicos">0,00</div>
+      <div style="font-size:0.75rem;opacity:0.7">máx. 60 pts</div>
+    </div>
+    <div class="res-item">
+      <div class="res-label">Experiencia investigadora</div>
+      <div class="res-valor" id="res-investigadora">0,00</div>
+      <div style="font-size:0.75rem;opacity:0.7">máx. 40 pts</div>
+    </div>
+    <div class="res-item total">
+      <div class="res-label">PUNTUACIÓN TOTAL</div>
+      <div class="res-valor res-total" id="res-total">0,00</div>
+      <div style="font-size:0.75rem;opacity:0.7">máx. 100 pts</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1: MÉRITOS ACADÉMICOS -->
+  <div class="section">
+    <div class="section-header">
+      <h2>1. Méritos académicos</h2>
+      <span class="max-pts">Máximo 60 puntos</span>
+    </div>
+    <div class="section-body">
+
+      <!-- GRADO -->
+      <div class="merito-bloque">
+        <div class="merito-title">1.1 Nota media del Grado, Licenciatura o Diplomatura</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> Se valora la nota media del expediente académico multiplicada por el factor de corrección según área:
+          <br>• <strong>Área afín × 1,0</strong> → puntuación = nota media directamente
+          <br>• <strong>Otras áreas × 0,8</strong> → puntuación = nota media × 0,8
+          <br>Solo se valora un único Grado/Licenciatura/Diplomatura. 
+Puntúa en el rango de la escala española (0-10 → 0-10 pts, o sobre 4 si 
+es extranjera, indica la equivalencia).
+        </div>
+        <div class="field-row triple">
+          <div class="field-group">
+            <label>Núm. documento</label>
+            <input type="number" id="grado_doc" placeholder="Ej: 1" min="1">
+            <div class="nota-limite">Nº del archivo enviado a secretaría</div>
+          </div>
+          <div class="field-group">
+            <label>Nota media del expediente</label>
+            <input type="number" id="grado_nota" placeholder="Ej: 7.5" min="0" max="10" step="0.01" oninput="calcular()">
+          </div>
+          <div class="field-group">
+            <label>Área</label>
+            <div class="area-radio">
+              <label><input type="radio" name="grado_area" value="1" onchange="calcular()" checked="checked"> Afín (×1)</label>
+              <label><input type="radio" name="grado_area" value="0.8" onchange="calcular()"> Otra (×0,8)</label>
+            </div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación de la puntuación</label>
+          <textarea id="grado_just" placeholder="Ej: Grado en Fisioterapia (área afín), nota media 7,5. Expediente académico completo adjunto como Doc. 1."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de notas oficial con nota media del expediente.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación grado:</span>
+          <span class="valor" id="pts-grado">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- MÁSTER -->
+      <div class="merito-bloque">
+        <div class="merito-title">1.2 Nota media del Máster oficial</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> Se valora la nota media del expediente del máster multiplicada por el factor de corrección:
+          <br>• <strong>Área afín × 1,0</strong> → puntuación = nota media directamente
+          <br>• <strong>Otras áreas × 0,8</strong> → puntuación = nota media × 0,8
+          <br>Solo se valora un único máster oficial. Si has obtenido el
+ nivel MECES 3 (Graduado ≥300 ECTS con ≥60 ECTS de nivel máster), tu 
+calificación media supondrá el 60% de la valoración académica.
+        </div>
+        <div class="field-row triple">
+          <div class="field-group">
+            <label>Núm. documento</label>
+            <input type="number" id="master_doc" placeholder="Ej: 2" min="1">
+            <div class="nota-limite">Nº del archivo enviado a secretaría</div>
+          </div>
+          <div class="field-group">
+            <label>Nota media del expediente</label>
+            <input type="number" id="master_nota" placeholder="Ej: 8.2" min="0" max="10" step="0.01" oninput="calcular()">
+          </div>
+          <div class="field-group">
+            <label>Área</label>
+            <div class="area-radio">
+              <label><input type="radio" name="master_area" value="1" onchange="calcular()" checked="checked"> Afín (×1)</label>
+              <label><input type="radio" name="master_area" value="0.8" onchange="calcular()"> Otra (×0,8)</label>
+            </div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación de la puntuación</label>
+          <textarea id="master_just" placeholder="Ej: Máster en Ciencias de la Actividad Física y el Deporte (área afín), nota media 8,2. Certificado adjunto como Doc. 2."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de notas oficial del Máster con nota media del expediente.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación máster:</span>
+          <span class="valor" id="pts-master">0,00 pts</span>
+        </div>
+      </div>
+
+      <div class="subtotal-row" style="background:#f0f4f8;padding:0.75rem 1rem;border-radius:6px;margin-top:0.5rem;">
+        <span class="label" style="font-weight:600;color:#1a3a5c">TOTAL MÉRITOS ACADÉMICOS (máx. 60 pts):</span>
+        <span class="valor" id="pts-academicos-total" style="font-size:1.3rem">0,00 pts</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: EXPERIENCIA INVESTIGADORA -->
+  <div class="section">
+    <div class="section-header">
+      <h2>2. Experiencia investigadora</h2>
+      <span class="max-pts">Máximo 40 puntos</span>
+    </div>
+    <div class="section-body">
+
+      <!-- PROYECTOS -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.1 Participación en proyectos financiados</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong>
+          <br>• Internacional: <strong>2 puntos</strong> por proyecto
+          <br>• Nacional: <strong>1 punto</strong> por proyecto
+          <br>• Autonómico o convocatoria privada: <strong>0,5 puntos</strong> por proyecto
+          <br>Límite máximo: <strong>5 puntos</strong> en este apartado.
+          <br>Indica el número de documento de cada proyecto en tu justificación.
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento(s)</label>
+            <input type="text" id="proy_doc" placeholder="Ej: 3, 4, 5">
+            <div class="nota-limite">Si son varios, sepáralos por comas</div>
+          </div>
+          <div class="field-group">
+            <label>Puntuación total este apartado (máx. 5 pts)</label>
+            <input type="number" id="proy_pts" placeholder="Ej: 3.5" min="0" max="5" step="0.5" oninput="calcular()">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación detallada</label>
+          <textarea id="proy_just" placeholder="Ej: Participación en 1 proyecto internacional (2p, Doc. 3) + 1 proyecto nacional (1p, Doc. 4) + 1 proyecto autonómico (0,5p, Doc. 5) = 3,5 puntos. Acredito con certificado de la universidad (no del IP)."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de la universidad (no del IP) para cada proyecto.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación proyectos (máx. 5 pts):</span>
+          <span class="valor" id="pts-proy">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- PUBLICACIONES JCR PRINCIPAL -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.2 Publicaciones en revistas indexadas JCR o PubMed — 1ª posición, última posición o autor de correspondencia</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>1 punto por publicación</strong>
+ en revistas indexadas en JCR (Journal Citation Reports) o PubMed donde 
+seas primer autor, último autor o autor de correspondencia.
+          <br>Límite conjunto con apartado 2.3: <strong>máximo 10 puntos</strong> en publicaciones indexadas.
+          <br>Para justificar: indica el cuartil (Q1, Q2...), la revista y tu posición de autoría.
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento(s)</label>
+            <input type="text" id="pub1_doc" placeholder="Ej: 6, 7">
+            <div class="nota-limite">Un número por cada publicación</div>
+          </div>
+          <div class="field-group">
+            <label>Número de publicaciones en esta categoría</label>
+            <input type="number" id="pub1_n" placeholder="Ej: 2" min="0" step="1" oninput="calcular()">
+            <div class="nota-limite">1 punto por publicación</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación detallada (una por línea o separadas por punto y coma)</label>
+          <textarea id="pub1_just" placeholder="Ej: Doc. 6 — Artículo en Journal of Sports Medicine (JCR Q1), primer autor, 2023. Doc. 7 — Artículo en European Journal of Applied Physiology (JCR Q2), autor de correspondencia, 2024."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> PDF de la publicación o comunicación de aceptación de la revista.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación pub. principales:</span>
+          <span class="valor" id="pts-pub1">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- PUBLICACIONES JCR RESTO -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.3 Publicaciones en revistas indexadas JCR o PubMed — resto de posiciones</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>0,5 puntos por publicación</strong> en revistas indexadas en JCR o PubMed en posiciones de autoría distintas a 1ª, última o correspondencia.
+          <br>Límite conjunto con apartado 2.2: <strong>máximo 10 puntos</strong> total en publicaciones indexadas.
+          <br><strong>No se valoran publicaciones en revistas no indexadas.</strong>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento(s)</label>
+            <input type="text" id="pub2_doc" placeholder="Ej: 8, 9, 10">
+          </div>
+          <div class="field-group">
+            <label>Número de publicaciones en esta categoría</label>
+            <input type="number" id="pub2_n" placeholder="Ej: 3" min="0" step="1" oninput="calcular()">
+            <div class="nota-limite">0,5 puntos por publicación</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación detallada</label>
+          <textarea id="pub2_just" placeholder="Ej: Doc. 8 — Artículo en IJSM (JCR Q2), 3ª posición, 2022. Doc. 9 — Artículo en Nutrients (PubMed), 4ª posición, 2023."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> PDF de la publicación o comunicación de aceptación de la revista.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación pub. secundarias:</span>
+          <span class="valor" id="pts-pub2">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- BECAS -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.4 Fondos para el periodo de doctorado (beca o contrato de investigación)</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>15 puntos</strong> por beca o contrato de investigación de duración de 4 años (FPU, FPI, contratos predoctorales, etc.).
+          <br>Si la duración es inferior, indica la proporción aproximada en la justificación.
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento</label>
+            <input type="number" id="beca_doc" placeholder="Ej: 11" min="1">
+            <div class="nota-limite">Nº del archivo enviado a secretaría</div>
+          </div>
+          <div class="field-group">
+            <label>Puntuación (máx. 15 pts)</label>
+            <input type="number" id="beca_pts" placeholder="Ej: 15" min="0" max="15" step="0.5" oninput="calcular()">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación</label>
+          <textarea id="beca_just" placeholder="Ej: Beca FPU (4 años), resolución adjunta como Doc. 11 = 15 puntos."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Resolución de la convocatoria.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación beca/contrato:</span>
+          <span class="valor" id="pts-beca">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- GRUPO INVESTIGACIÓN -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.5 Pertenencia a grupo de investigación reconocido</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>5 puntos</strong> por pertenencia a un grupo de investigación reconocido.
+          <br>Límite: <strong>máximo 5 puntos</strong> en este apartado (no se acumula por pertenecer a varios grupos).
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento</label>
+            <input type="number" id="grupo_doc" placeholder="Ej: 12" min="1">
+          </div>
+          <div class="field-group">
+            <label>¿Pertenece a grupo reconocido?</label>
+            <select id="grupo_si" onchange="calcular()">
+              <option value="0" selected="selected">No</option>
+              <option value="5">Sí (5 puntos)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación</label>
+          <textarea id="grupo_just" placeholder="Ej: Miembro del Grupo de Investigación en Fisiología del Ejercicio (GIFE), Universidad de Zaragoza. Certificado adjunto como Doc. 12."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de la universidad (no del IP).
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación grupo investigación:</span>
+          <span class="valor" id="pts-grupo">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- CONGRESOS INTERNACIONALES -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.6 Comunicaciones a congresos internacionales (como primer autor)</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>0,10 puntos por comunicación internacional</strong> como primer autor.
+          <br>Límite: <strong>máximo 3 puntos</strong> en congresos internacionales. Se valoran máximo 3 comunicaciones por congreso.
+          <br>Solo se valoran comunicaciones donde figures como <strong>primer autor</strong>.
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento(s)</label>
+            <input type="text" id="ci_doc" placeholder="Ej: 13, 14, 15">
+            <div class="nota-limite">Un número por cada comunicación</div>
+          </div>
+          <div class="field-group">
+            <label>Número de comunicaciones internacionales</label>
+            <input type="number" id="ci_n" placeholder="Ej: 10" min="0" step="1" oninput="calcular()">
+            <div class="nota-limite">0,10 pts/comunicación, máx. 3 pts total</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación (indica congreso, año y si eres primer autor)</label>
+          <textarea id="ci_just" placeholder="Ej: Doc. 13 — ECSS 2022 (Sevilla), comunicación oral, primer autor. Doc. 14 — ACSM 2023, poster, primer autor."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de comunicación de cada congreso.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación congresos internacionales (máx. 3 pts):</span>
+          <span class="valor" id="pts-ci">0,00 pts</span>
+        </div>
+      </div>
+
+      <!-- CONGRESOS NACIONALES -->
+      <div class="merito-bloque">
+        <div class="merito-title">2.7 Comunicaciones a congresos nacionales (como primer autor)</div>
+        <div class="criterios-texto">
+          <strong>Criterio de puntuación:</strong> <strong>0,05 puntos por comunicación nacional</strong> como primer autor.
+          <br>Límite: <strong>máximo 2 puntos</strong> en congresos nacionales. Se valoran máximo 3 comunicaciones por congreso.
+          <br>Solo se valoran comunicaciones donde figures como <strong>primer autor</strong>.
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Núm. documento(s)</label>
+            <input type="text" id="cn_doc" placeholder="Ej: 16, 17">
+            <div class="nota-limite">Un número por cada comunicación</div>
+          </div>
+          <div class="field-group">
+            <label>Número de comunicaciones nacionales</label>
+            <input type="number" id="cn_n" placeholder="Ej: 8" min="0" step="1" oninput="calcular()">
+            <div class="nota-limite">0,05 pts/comunicación, máx. 2 pts total</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Justificación (indica congreso, año y si eres primer autor)</label>
+          <textarea id="cn_just" placeholder="Ej: Doc. 16 — Congreso AEFD 2022 (Madrid), comunicación oral, primer autor. Doc. 17 — Congreso NSCA España 2023, poster, primer autor."></textarea>
+        </div>
+        <div class="doc-ref-box">
+          <strong>Documento requerido:</strong> Certificado de comunicación de cada congreso.
+        </div>
+        <div class="subtotal-row">
+          <span class="label">Puntuación congresos nacionales (máx. 2 pts):</span>
+          <span class="valor" id="pts-cn">0,00 pts</span>
+        </div>
+      </div>
+
+      <div class="subtotal-row" style="background:#f0f4f8;padding:0.75rem 1rem;border-radius:6px;margin-top:0.5rem;">
+        <span class="label" style="font-weight:600;color:#1a3a5c">TOTAL EXPERIENCIA INVESTIGADORA (máx. 40 pts):</span>
+        <span class="valor" id="pts-investig-total" style="font-size:1.3rem">0,00 pts</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTÓN ENVIAR -->
+  <button class="btn-pdf" id="btn-pdf" onclick="exportarPDF()">Descargar informe PDF</button>
+  <button class="btn-enviar" id="btn-enviar" onclick="enviarFormulario()">Enviar autobaremación a la comisión</button>
+  <div class="msg-exito" id="msg-exito">
+    ✓ Autobaremación enviada correctamente. Ahora pulsa "Descargar 
+informe PDF" para generar tu informe y envíalo por correo a la 
+secretaría del programa solicitando acuse de recibo.
+  </div>
+  <div class="msg-error" id="msg-error">
+    No se ha podido enviar. Por favor, verifica tu conexión y vuelve a intentarlo, o contacta con la secretaría.
+  </div>
+
+</div>
+
+<script>
+// URL del Google Apps Script — reemplaza con tu URL tras desplegarlo
+const APPS_SCRIPT_URL = "https://formspree.io/f/xgorjqer";
+
+function fmt(n) {
+  return n.toFixed(2).replace('.', ',');
+}
+
+function calcular() {
+  const grado_nota = parseFloat(document.getElementById('grado_nota').value) || 0;
+  const grado_factor = parseFloat(document.querySelector('input[name="grado_area"]:checked').value);
+  const pts_grado = Math.min(grado_nota * grado_factor, 10);
+
+  const master_nota = parseFloat(document.getElementById('master_nota').value) || 0;
+  const master_factor = parseFloat(document.querySelector('input[name="master_area"]:checked').value);
+  const pts_master = Math.min(master_nota * master_factor, 10);
+
+  const pts_academicos = Math.min(pts_grado + pts_master, 60);
+
+  const proy_raw = parseFloat(document.getElementById('proy_pts').value) || 0;
+  const pts_proy = Math.min(proy_raw, 5);
+
+  const pub1_n = parseInt(document.getElementById('pub1_n').value) || 0;
+  const pub2_n = parseInt(document.getElementById('pub2_n').value) || 0;
+  const pts_pubs_raw = pub1_n * 1 + pub2_n * 0.5;
+  const pts_pubs = Math.min(pts_pubs_raw, 10);
+  const pts_pub1 = Math.min(pub1_n * 1, 10);
+  const pts_pub2 = Math.min(pts_pubs - Math.min(pub1_n * 1, 10), 0) + Math.min(pub2_n * 0.5, 10 - Math.min(pub1_n, 10));
+
+  const beca_raw = parseFloat(document.getElementById('beca_pts').value) || 0;
+  const pts_beca = Math.min(beca_raw, 15);
+
+  const grupo_pts = parseFloat(document.getElementById('grupo_si').value) || 0;
+  const pts_grupo = Math.min(grupo_pts, 5);
+
+  const ci_n = parseInt(document.getElementById('ci_n').value) || 0;
+  const pts_ci = Math.min(ci_n * 0.1, 3);
+
+  const cn_n = parseInt(document.getElementById('cn_n').value) || 0;
+  const pts_cn = Math.min(cn_n * 0.05, 2);
+
+  const pts_investig = Math.min(pts_proy + pts_pubs + pts_beca + pts_grupo + pts_ci + pts_cn, 40);
+  const pts_total = Math.min(pts_academicos + pts_investig, 100);
+
+  document.getElementById('pts-grado').textContent = fmt(pts_grado) + ' pts';
+  document.getElementById('pts-master').textContent = fmt(pts_master) + ' pts';
+  document.getElementById('pts-academicos-total').textContent = fmt(pts_academicos) + ' pts';
+  document.getElementById('pts-proy').textContent = fmt(pts_proy) + ' pts';
+  document.getElementById('pts-pub1').textContent = fmt(Math.min(pub1_n * 1, 10)) + ' pts';
+  document.getElementById('pts-pub2').textContent = fmt(Math.min(pub2_n * 0.5, Math.max(0, 10 - Math.min(pub1_n, 10)))) + ' pts';
+  document.getElementById('pts-beca').textContent = fmt(pts_beca) + ' pts';
+  document.getElementById('pts-grupo').textContent = fmt(pts_grupo) + ' pts';
+  document.getElementById('pts-ci').textContent = fmt(pts_ci) + ' pts';
+  document.getElementById('pts-cn').textContent = fmt(pts_cn) + ' pts';
+  document.getElementById('pts-investig-total').textContent = fmt(pts_investig) + ' pts';
+
+  document.getElementById('res-academicos').textContent = fmt(pts_academicos);
+  document.getElementById('res-investigadora').textContent = fmt(pts_investig);
+  document.getElementById('res-total').textContent = fmt(pts_total);
+
+  return {
+    pts_grado, pts_master, pts_academicos,
+    pts_proy, pts_pubs: Math.min(pts_pubs, 10),
+    pts_beca, pts_grupo, pts_ci, pts_cn, pts_investig, pts_total
+  };
+}
+
+async function enviarFormulario() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const email = document.getElementById('email').value.trim();
+
+  if (!nombre || !email) {
+    alert('Por favor, introduce tu nombre completo y correo electrónico antes de enviar.');
+    return;
+  }
+  if (!email.includes('@')) {
+    alert('Por favor, introduce un correo electrónico válido.');
+    return;
+  }
+
+  const pts = calcular();
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const datos = {
+    nombre,
+    email,
+    fecha: new Date().toLocaleString('es-ES'),
+    grado_doc: document.getElementById('grado_doc').value,
+    grado_nota: document.getElementById('grado_nota').value,
+    grado_area: document.querySelector('input[name="grado_area"]:checked').value == '1' ? 'Afín' : 'Otra',
+    grado_just: document.getElementById('grado_just').value,
+    pts_grado: pts.pts_grado.toFixed(2),
+    master_doc: document.getElementById('master_doc').value,
+    master_nota: document.getElementById('master_nota').value,
+    master_area: document.querySelector('input[name="master_area"]:checked').value == '1' ? 'Afín' : 'Otra',
+    master_just: document.getElementById('master_just').value,
+    pts_master: pts.pts_master.toFixed(2),
+    pts_academicos: pts.pts_academicos.toFixed(2),
+    proy_doc: document.getElementById('proy_doc').value,
+    proy_pts: document.getElementById('proy_pts').value,
+    proy_just: document.getElementById('proy_just').value,
+    pts_proy: pts.pts_proy.toFixed(2),
+    pub1_doc: document.getElementById('pub1_doc').value,
+    pub1_n: document.getElementById('pub1_n').value,
+    pub1_just: document.getElementById('pub1_just').value,
+    pub2_doc: document.getElementById('pub2_doc').value,
+    pub2_n: document.getElementById('pub2_n').value,
+    pub2_just: document.getElementById('pub2_just').value,
+    pts_publicaciones: pts.pts_pubs.toFixed(2),
+    beca_doc: document.getElementById('beca_doc').value,
+    beca_pts: document.getElementById('beca_pts').value,
+    beca_just: document.getElementById('beca_just').value,
+    pts_beca: pts.pts_beca.toFixed(2),
+    grupo_doc: document.getElementById('grupo_doc').value,
+    grupo_si: document.getElementById('grupo_si').value == '5' ? 'Sí' : 'No',
+    grupo_just: document.getElementById('grupo_just').value,
+    pts_grupo: pts.pts_grupo.toFixed(2),
+    ci_doc: document.getElementById('ci_doc').value,
+    ci_n: document.getElementById('ci_n').value,
+    ci_just: document.getElementById('ci_just').value,
+    pts_ci: pts.pts_ci.toFixed(2),
+    cn_doc: document.getElementById('cn_doc').value,
+    cn_n: document.getElementById('cn_n').value,
+    cn_just: document.getElementById('cn_just').value,
+    pts_cn: pts.pts_cn.toFixed(2),
+    pts_investigadora: pts.pts_investig.toFixed(2),
+    pts_total: pts.pts_total.toFixed(2)
+  };
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+    if (resp.ok) {
+      document.getElementById('msg-exito').style.display = 'block';
+      document.getElementById('msg-error').style.display = 'none';
+      btn.textContent = 'Enviado correctamente ✓';
+    } else {
+      throw new Error('Error en el servidor');
+    }
+  } catch (e) {
+    document.getElementById('msg-error').style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Enviar autobaremación a la comisión';
+  }
+}
+
+calcular();
+
+function exportarPDF() {
+  const nombre = document.getElementById('nombre').value.trim() || 'Candidato';
+  const pts = calcular();
+  
+  // Temporarily set document title for PDF filename
+  const oldTitle = document.title;
+  document.title = 'Autobaremacion_' + nombre.replace(/\s+/g, '_');
+  
+  window.print();
+  
+  document.title = oldTitle;
+}
+</script>
+
+
+</body></html>
